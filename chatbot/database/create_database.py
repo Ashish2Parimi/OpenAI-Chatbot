@@ -1,10 +1,11 @@
 import logging
 import sqlite3
-import properties_data
+
+from chatbot import properties_data
 
 
 class DatabaseCreator:
-    def __init__(self, db_path='../../property_data.db'):
+    def __init__(self, db_path='property_data.db'):
         self.db_path = db_path
 
     def create_database(self):

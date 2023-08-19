@@ -17,12 +17,12 @@ def run_unit_tests():
 
 def create_database():
     logging.info("Creating database...")
-    subprocess.run(["python", "./chatbot/database/create_database.py"])
+    subprocess.run(["python", "chatbot/database/create_database.py"])
 
 
 def start_bot():
     logging.info("Starting the bot...")
-    subprocess.run(["python", "./chatbot/bot.py"])
+    subprocess.run(["python", "chatbot/bot.py"])
 
 
 def main():

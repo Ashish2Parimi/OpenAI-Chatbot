@@ -1,18 +1,17 @@
-import json
 import logging
 import sqlite3
 
 import openai
 from flask import Flask, jsonify, request
 
-from chatbot.config import Config
+from chatbot import properties_data, config
 
 
 class PropertyBot:
 
     def __init__(self):
         self.app = Flask(__name__)
-        openai.api_key = Config.OPENAI_API_KEY
+        openai.api_key = config.OPENAI_API_KEY
         self.app.add_url_rule('/ask', view_func=ask, methods=['POST'])
 
     def run(self):
@@ -43,7 +42,7 @@ def ask():
 
     try:
         chat_completion = openai.ChatCompletion.create(
-            model=Config.OPENAI_MODEL,
+            model=config.OPENAI_MODEL,
             messages=messages
         )
 
@@ -59,7 +58,7 @@ def get_description_from_db(question):
     if not address:
         return "description: We don't have the info about this address"
     try:
-        with sqlite3.connect(Config.DATABASE_PATH) as conn:
+        with sqlite3.connect(config.DATABASE_PATH) as conn:
             c = conn.cursor()
             c.execute("SELECT description FROM properties WHERE address = ?", (address,))
             return "description: " + c.fetchone()[0]
@@ -70,9 +69,7 @@ def get_description_from_db(question):
 
 def extract_address(question):
     # Logic to extract the address from the question
-    with open('./data.json', 'r') as file:
-        properties = json.load(file)
-    keys = properties.keys()
+    keys = dict(properties_data.PROPERTIES_DATA).keys()
     for address_key in keys:
         if address_key in question:
             return address_key
