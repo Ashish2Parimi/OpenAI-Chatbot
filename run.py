@@ -1,28 +1,31 @@
+#!/usr/bin/env python3
+
+
 import logging
 import subprocess
 
 
 def install_requirements():
     logging.info("Installing required packages...")
-    subprocess.run(["pip", "install", "-r", "requirements.txt"])
+    subprocess.run(["pip3", "install", "-r", "requirements.txt"])
 
 
 def run_unit_tests():
     logging.info("Running unit tests...")
     # Replace this with the correct path to your unit tests
     path_to_tests = "test/"
-    result = subprocess.run(["python", "-m", "unittest", "discover", path_to_tests, "-v"])
+    result = subprocess.run(["python3", "-m", "unittest", "discover", path_to_tests, "-v"])
     return result.returncode
 
 
 def create_database():
     logging.info("Creating database...")
-    subprocess.run(["python", "chatbot/database/create_database.py"])
+    subprocess.run(["python3", "chatbot/database/create_database.py"])
 
 
 def start_bot():
     logging.info("Starting the bot...")
-    subprocess.run(["python", "chatbot/bot.py"])
+    subprocess.run(["python3", "chatbot/bot.py"])
 
 
 def main():

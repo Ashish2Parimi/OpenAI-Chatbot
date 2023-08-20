@@ -1,18 +1,26 @@
+import json
 import logging
+import os
 import sqlite3
+from pathlib import Path
+from dotenv import load_dotenv
+
 
 import openai
 from flask import Flask, jsonify, request
-
-from chatbot import properties_data, config
 
 
 class PropertyBot:
 
     def __init__(self):
         self.app = Flask(__name__)
-        openai.api_key = config.OPENAI_API_KEY
         self.app.add_url_rule('/ask', view_func=ask, methods=['POST'])
+
+        # Load the environment variables from the config.env file
+        load_dotenv('config.env')
+
+        # Access the environment variables
+        openai.api_key = os.environ.get('OPENAI_API_KEY')
 
     def run(self):
         self.app.run(debug=True)
@@ -23,7 +31,9 @@ def ask():
     This function is called when the user sends a POST request to the /ask endpoint.
     It expects a JSON object with a question field. It returns a JSON object with a response field.
     """
+    OPENAI_MODEL = os.environ.get('OPENAI_MODEL')
     question = request.json.get('question')
+
 
     if not question:
         logging.error("Bad Request: Question is required")
@@ -42,7 +52,7 @@ def ask():
 
     try:
         chat_completion = openai.ChatCompletion.create(
-            model=config.OPENAI_MODEL,
+            model=OPENAI_MODEL,
             messages=messages
         )
 
@@ -54,11 +64,12 @@ def ask():
 
 
 def get_description_from_db(question):
+    database_path = os.environ.get('DATABASE_PATH')
     address = extract_address(question)
     if not address:
         return "description: We don't have the info about this address"
     try:
-        with sqlite3.connect(config.DATABASE_PATH) as conn:
+        with sqlite3.connect(database_path) as conn:
             c = conn.cursor()
             c.execute("SELECT description FROM properties WHERE address = ?", (address,))
             return "description: " + c.fetchone()[0]
@@ -69,10 +80,12 @@ def get_description_from_db(question):
 
 def extract_address(question):
     # Logic to extract the address from the question
-    keys = dict(properties_data.PROPERTIES_DATA).keys()
-    for address_key in keys:
-        if address_key in question:
-            return address_key
+    data_dir = Path(__file__).parent.parent / 'data.json'
+    with open(data_dir, 'r') as file:
+        data = json.load(file)
+    for address_key in data:
+        if address_key['address'] in question:
+            return address_key['address']
     return None
 
 
