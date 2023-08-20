@@ -10,7 +10,6 @@ Python >= 3.9
 ### Installation
 ##### For execute the following commands in terminal(maxOs, Linux tested) to install dependencies, run unit tests, create the database, and start the bot.
 ```
-cd test
 chmod +x ./run.py
 ./run.py
 ```
