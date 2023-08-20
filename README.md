@@ -1,9 +1,18 @@
 # Chatbot Project
 A comprehensive chatbot that helps users with various tasks. This repository contains all the code, unit tests, and necessary files to get the chatbot up and running.
 
+#### Requriments
+```
+Python >= 3.9
+```
 
 ### Installation
-##### For execute the following commands in a pre-existing  virtual environment in an IDE like Pycharm to install dependencies, run unit tests, create the database, and start the bot.
+##### For execute the following commands in terminal(maxOs, Linux tested) to install dependencies, run unit tests, create the database, and start the bot.
+```
+cd test
+chmod +x ./run.py
+./run.py
+```
 
 ### Usage
 Once the bot is running, you can interact with it using default port is 5000 following commands:
