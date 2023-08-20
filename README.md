@@ -1,11 +1,11 @@
 # Chatbot Project
 A comprehensive chatbot that helps users with various tasks. This repository contains all the code, unit tests, and necessary files to get the chatbot up and running.
 
-#### Requriments
+#### Requirements
 ```
 Python >= 3.9
 ```
-#### Note: OpenAI API key is requride in future, but is now included as part of ``config.env``
+#### Note: OpenAI API key is require in the future, but is now included as part of ``config.env``
 
 ### Installation
 ##### For execute the following commands in terminal(maxOs, Linux tested) to install dependencies, run unit tests, create the database, and start the bot.
