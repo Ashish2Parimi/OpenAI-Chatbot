@@ -8,8 +8,9 @@ Python >= 3.9
 #### Note: OpenAI API key is included as part of ``config.env``
 
 ### Installation
-##### Open a terminal( maxOs ) in the code directory and execute the following commands to install dependencies, run unit tests, create the database, and start the bot.
+##### Open terminal and navigate to the code directory. Follow the commands in terminal ( maxOs tested) to install dependencies, run unit tests, create the database, and start the bot.
 ```
+!export PYTHONPATH=$PWD 
 chmod +x ./run.py
 ./run.py
 ```
@@ -33,7 +34,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"question":"How many rooms
 ##### Response
 ```
 {
-    "answer": "The house at 123 Main Street has 3 bedrooms",
+    "response": "The house at 123 Main Street has 3 bedrooms",
     
 }
 ```
