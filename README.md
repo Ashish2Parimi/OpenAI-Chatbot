@@ -8,7 +8,7 @@ Python >= 3.9
 #### Note: OpenAI API key is included as part of ``config.env``
 
 ### Installation
-##### For execute the following commands in terminal ( maxOs ) to install dependencies, run unit tests, create the database, and start the bot.
+##### Open a terminal( maxOs ) in the code directory and execute the following commands to install dependencies, run unit tests, create the database, and start the bot.
 ```
 chmod +x ./run.py
 ./run.py
