@@ -3,6 +3,8 @@ import logging
 import sqlite3
 from pathlib import Path
 
+from flask import app
+
 
 class DatabaseCreator:
     def __init__(self):
@@ -11,6 +13,9 @@ class DatabaseCreator:
         self.data_path = current_dir / 'data.json'
 
     def create_database(self):
+        """
+        This method will create the database and populate it with the data from the data.json file.
+        """
         conn = None
         try:
             conn = sqlite3.connect(self.db_path)
@@ -28,10 +33,13 @@ class DatabaseCreator:
                     c.executemany("INSERT OR IGNORE INTO property_data (keyword, context) VALUES (?, ?)",
                                   data)
 
-            logging.info("Database created successfully.")
+            app.logging.info("Database created successfully.")
 
         except sqlite3.Error as e:
-            logging.error(f"Database error: {e}")
+            app.logging.error(f"Database error: {e}")
+        finally:
+            if conn:
+                conn.close()
 
     def create(self):
         self.create_database()

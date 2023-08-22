@@ -5,7 +5,7 @@ import openai
 from flask import app, jsonify
 from flask.cli import load_dotenv
 
-from chatbot.Exceptions.InternalServiceException import InternalServiceException
+from chatbot.exceptions.InternalServiceException import InternalServiceException
 
 
 class OpenAIAccessor:
@@ -30,8 +30,8 @@ class OpenAIAccessor:
             chat_completion = openai.ChatCompletion.create(
                 model=self.model,
                 messages=messages,
-                temperature=float(os.environ.get('OPENAI_TEMPERATURE')),  # degree of randomness of the model's output
-                max_tokens=int(os.environ.get('OPENAI_MAX_TOKENS')),  # the maximum number of tokens to generate
+                temperature=float(os.environ.get('OPENAI_TEMPERATURE')),
+                max_tokens=int(os.environ.get('OPENAI_MAX_TOKENS')),
             )
 
         except openai.error.OpenAIError as e:

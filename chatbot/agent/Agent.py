@@ -1,6 +1,8 @@
-from flask import Flask, request, app
+import logging
 
-from chatbot.Exceptions.BadRequest import BadRequest
+from flask import Flask, request
+
+from chatbot.exceptions.BadRequest import BadRequest
 from chatbot.service.BotService import BotService
 
 
@@ -37,7 +39,7 @@ class Agent:
         question = request.json.get('question')
 
         if not question:
-            app.logging.error("Bad Request: Question is required")
+            logging.error("Bad Request: Question is required")
             raise BadRequest("Question is required")
 
         return self.service.prompt_and_respond(question)

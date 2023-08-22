@@ -1,19 +1,38 @@
 #!/usr/bin/env python3
-#!export PYTHONPATH="$PWD
 
-
-import logging
 import subprocess
+from logging.config import dictConfig
+
+from flask import app
+
+"""
+This is the main entry point for the chatbot. It will install the required packages, run the unit tests, create the
+database, and start the chatbot.
+"""
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {'wsgi': {
+        'class': 'logging.StreamHandler',
+        'stream': 'ext://flask.logging.wsgi_errors_stream',
+        'formatter': 'default'
+    }},
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi']
+    }
+})
 
 
 def install_requirements():
-    logging.info("Installing required packages...")
+    app.logging.info("Installing required packages...")
     subprocess.run(["pip3", "install", "-r", "requirements.txt"])
 
 
 def run_unit_tests():
-    # logging.info("Running unit tests...")
-    # # Replace this with the correct path to your unit tests
+    # app.logging.info("Running unit tests...")
     # path_to_tests = "test/"
     # result = subprocess.run(["python3", "-m", "unittest", "discover", path_to_tests, "-v"])
     # return result.returncode
@@ -21,12 +40,11 @@ def run_unit_tests():
 
 
 def create_database():
-    logging.info("Creating database...")
+    app.logging.info("Creating database...")
     subprocess.run(["python3", "chatbot/database/CreateDatabase.py"])
 
 
 def start_bot():
-    logging.info("Starting the bot...")
     subprocess.run(["python3", "chatbot/agent/Agent.py"])
 
 
@@ -35,12 +53,12 @@ def main():
 
     test_result = run_unit_tests()
     # if test_result == 0:
-    logging.info("Unit tests passed. \nCreating Database...")
     create_database()
-    logging.info("Starting the chatbot...")
+    app.logging.info("Database created. Unit tests passed.")
+    app.logging.info("Starting the chatbot...")
     start_bot()
     # else:
-    #     logging.info("Unit tests failed. Please fix the errors before running the bot.")
+    #     app.logging.error("Unit tests failed. Please fix the errors before running the bot.")
 
 
 if __name__ == "__main__":
