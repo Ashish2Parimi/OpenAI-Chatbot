@@ -21,10 +21,7 @@ class OpenAIAccessor:
 
         messages = [
             {"role": "system",
-             "content": "You are a helpful real-estate agent who answers questions based on given context "
-                        "and question. The content can be  description of property or an error message. "
-                        "if its error please ask the user to try after sometime proving a simple "
-                        "response"},
+             "content": os.environ.get('OPENAI_TONE')},  # this is the tone of the chatbot's response
             {"role": "user", "content": context},
             {"role": "user", "content": question}
         ]
@@ -33,8 +30,8 @@ class OpenAIAccessor:
             chat_completion = openai.ChatCompletion.create(
                 model=self.model,
                 messages=messages,
-                temperature=1,  # this is the degree of randomness of the model's output
-                max_tokens=100,  # the maximum number of tokens to generate
+                temperature=float(os.environ.get('OPENAI_TEMPERATURE')),  # degree of randomness of the model's output
+                max_tokens=int(os.environ.get('OPENAI_MAX_TOKENS')),  # the maximum number of tokens to generate
             )
 
         except openai.error.OpenAIError as e:
