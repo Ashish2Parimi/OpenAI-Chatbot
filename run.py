@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
 import subprocess
+import unittest
 from logging.config import dictConfig
 from pathlib import Path
 
+import coverage
 from flask import app
 
 """
@@ -32,12 +34,27 @@ def install_requirements():
     subprocess.run(["pip3", "install", "-r", "requirements.txt"])
 
 
-def run_unit_tests():
-    app.logging.info("Running unit tests...")
-    path_to_tests = Path(__file__).parent / 'test'
-    print(path_to_tests)
-    result = subprocess.run(["python3", "-m", "unittest", "discover", path_to_tests, "-v"])
-    return result.returncode
+def run_unit_tests_with_coverage():
+
+    app.logging.info("Running unit tests with coverage...")
+
+    cov = coverage.Coverage(source=[str('test')])  # Replace with your code directory
+    cov.start()
+
+    loader = unittest.TestLoader()
+    tests = loader.discover(str('test'))
+
+    test_runner = unittest.TextTestRunner(verbosity=2)
+    test_result = test_runner.run(tests)
+
+    cov.stop()
+    cov.save()
+
+    # Print the coverage percentage
+    coverage_percentage = cov.report(omit=['*test*'])
+    print(f"Coverage: {coverage_percentage:.2f}%")
+
+    return test_result
 
 
 def create_database():
@@ -52,8 +69,8 @@ def start_bot():
 def main():
     install_requirements()
 
-    test_result = run_unit_tests()
-    if test_result == 0:
+    test_result = run_unit_tests_with_coverage()
+    if test_result.wasSuccessful():
         create_database()
         app.logging.info("Database created. Unit tests passed.")
         app.logging.info("Starting the chatbot...")
