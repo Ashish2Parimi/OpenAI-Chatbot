@@ -11,7 +11,7 @@ Python >= 3.9
 #### Note: OpenAI API key is part of ``chatbot/config/OpenAI_config.env``. Provide the key if required.
 
 ### Installation
-Open terminal and navigate to the code directory. Follow the commands in terminal ( macOs tested) to give permissions to ``run.py``, install dependencies, run unit tests, create the database, and start the bot.
+Open terminal and navigate to the code directory. Follow the commands in terminal ( macOs tested) set python code path, to give permissions to ``run.py``, install dependencies, run unit tests, create the database, and start the bot.
 ```
 !export PYTHONPATH=$PWD 
 chmod +x ./run.py
@@ -82,6 +82,9 @@ curl -X POST -H "Content-Type: application/json" -d '{"question":"How many rooms
     
     resolution: Navigate to the chatbot directory, re-run the script and relaunch postman. try curl command if issue persists
 ```
-
+ModuleNotFound - Python is unable to reconize the directorys 
+```
+ Set PYTHONPATH = # current chatbot code directory
+```
 
 
