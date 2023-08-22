@@ -2,6 +2,7 @@
 
 import subprocess
 from logging.config import dictConfig
+from pathlib import Path
 
 from flask import app
 
@@ -32,11 +33,11 @@ def install_requirements():
 
 
 def run_unit_tests():
-    # app.logging.info("Running unit tests...")
-    # path_to_tests = "test/"
-    # result = subprocess.run(["python3", "-m", "unittest", "discover", path_to_tests, "-v"])
-    # return result.returncode
-    return 0
+    app.logging.info("Running unit tests...")
+    path_to_tests = Path(__file__).parent / 'test'
+    print(path_to_tests)
+    result = subprocess.run(["python3", "-m", "unittest", "discover", path_to_tests, "-v"])
+    return result.returncode
 
 
 def create_database():
@@ -52,13 +53,13 @@ def main():
     install_requirements()
 
     test_result = run_unit_tests()
-    # if test_result == 0:
-    create_database()
-    app.logging.info("Database created. Unit tests passed.")
-    app.logging.info("Starting the chatbot...")
-    start_bot()
-    # else:
-    #     app.logging.error("Unit tests failed. Please fix the errors before running the bot.")
+    if test_result == 0:
+        create_database()
+        app.logging.info("Database created. Unit tests passed.")
+        app.logging.info("Starting the chatbot...")
+        start_bot()
+    else:
+        app.logging.error("Unit tests failed. Please fix the errors before running the bot.")
 
 
 if __name__ == "__main__":

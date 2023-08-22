@@ -17,8 +17,10 @@ class DatabaseAccessor:
         """
         This method will run a query on the database and return the results.
         """
+        conn = None
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            conn = sqlite3.connect(self.db_path)
+            with conn:
                 c = conn.cursor()
                 c.execute(query, args)
                 return c.fetchall()

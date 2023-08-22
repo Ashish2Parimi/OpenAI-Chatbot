@@ -1,8 +1,9 @@
-import sqlite3
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch, Mock
 
-from chatbot.database.create_database import DatabaseCreator
+import sqlite3
+
+from chatbot.database.CreateDatabase import DatabaseCreator
 
 
 class TestDatabaseCreator(unittest.TestCase):
@@ -10,40 +11,40 @@ class TestDatabaseCreator(unittest.TestCase):
     def setUp(self):
         self.db_creator = DatabaseCreator()
 
-    @patch("sqlite3.connect")
-    def test_create_database_table_exists(self, mock_connect):
-        # Mock the cursor fetchone method to simulate that the table already exists
-        mock_cursor = MagicMock()
-        mock_cursor.fetchone.return_value = True
-
-        mock_conn = MagicMock()
-        mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
-
-        self.db_creator.create_database()
-
-        # Assert that the CREATE TABLE command was never executed
-        self.assertEqual(mock_cursor.execute.call_count, 1)
-
-    @patch("sqlite3.connect")
-    def test_create_database_table_does_not_exist(self, mock_connect):
-        # Mock the cursor fetchone method to simulate that the table does not exist
-        mock_cursor = MagicMock()
+    @patch('sqlite3.connect')
+    @patch('json.load')
+    @patch('builtins.open', new_callable=unittest.mock.mock_open,
+           read_data='{"keyword": "value", "context": "context"}')
+    def test_create_database_if_not_exist(self, mock_open, mock_json_load, mock_connect):
+        mock_cursor = Mock()
         mock_cursor.fetchone.return_value = None
-
-        mock_conn = MagicMock()
-        mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
+        mock_connect.return_value.cursor.return_value = mock_cursor
+        mock_json_load.return_value = [{'keyword': 'value', 'context': 'context'}]
 
         self.db_creator.create_database()
 
-        # Assert that the CREATE TABLE command was executed
-        self.assertEqual(mock_cursor.execute.call_count, 2)
-        mock_cursor.execute.assert_any_call('''CREATE TABLE properties (address text UNIQUE, description text)''')
+        mock_cursor.execute.assert_called_with('''CREATE TABLE property_data (keyword text UNIQUE, context text)''')
+        mock_cursor.executemany.assert_called()
 
-    @patch("sqlite3.connect")
-    @patch("logging.error")
-    def test_create_database_error(self, mock_log_error, mock_connect):
-        mock_connect.side_effect = sqlite3.Error("An error occurred")
+    @patch('sqlite3.connect')
+    def test_not_create_database_if_exist(self, mock_connect):
+        mock_cursor = Mock()
+        mock_cursor.fetchone.return_value = 'something'
+        mock_connect.return_value.cursor.return_value = mock_cursor
+
         self.db_creator.create_database()
-        mock_log_error.assert_called_with("Database error: An error occurred")
+
+        mock_cursor.execute.assert_called_with(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='property_data'")
+        mock_cursor.executemany.assert_not_called()
+
+    @patch('sqlite3.connect')
+    @patch('flask.app.logging.error')
+    def test_handle_sqlite_error(self, mock_logging_error, mock_connect):
+        mock_connect.side_effect = sqlite3.Error('An error occurred')
+
+        self.db_creator.create_database()
+
+        mock_logging_error.assert_called_with('Database error: An error occurred')
+
+
